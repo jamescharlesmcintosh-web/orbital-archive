@@ -1,0 +1,23 @@
+{
+  "name": "orbital-archive",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Orbital Archive — an immersive WebGL portfolio world",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "three": "^0.172.0"
+  },
+  "devDependencies": {
+    "@types/three": "^0.172.0",
+    "typescript": "^5.7.3",
+    "vite": "^6.0.7"
+  },
+  "allowScripts": {
+    "esbuild@0.25.12": true
+  }
+}
