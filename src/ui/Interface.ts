@@ -30,11 +30,15 @@ export class Interface {
   private readonly station: HTMLElement
   private readonly meter: HTMLElement
   private readonly count: HTMLElement
+  private readonly viewer: HTMLElement
+  private readonly viewerFrame: HTMLIFrameElement
+  private readonly viewerTitle: HTMLElement
+  private readonly viewerOpen: HTMLAnchorElement
 
   private readonly recordFields: Record<string, HTMLElement>
   private readonly liveLink: HTMLAnchorElement
-  private readonly repoLink: HTMLAnchorElement
 
+  private currentProject: Project | null = null
   private view: ViewName = 'world'
 
   constructor(
@@ -64,7 +68,11 @@ export class Interface {
       role: $(this.record, '[data-field="role"]'),
     }
     this.liveLink = $(this.record, '[data-field="live"]') as HTMLAnchorElement
-    this.repoLink = $(this.record, '[data-field="repo"]') as HTMLAnchorElement
+
+    this.viewer = $(this.root, '[data-el="viewer"]')
+    this.viewerFrame = $(this.viewer, '[data-el="viewer-iframe"]') as HTMLIFrameElement
+    this.viewerTitle = $(this.viewer, '[data-field="viewer-title"]')
+    this.viewerOpen = $(this.viewer, '[data-field="viewer-open"]') as HTMLAnchorElement
 
     this.buildStackContainer()
     this.buildIndex()
@@ -134,6 +142,11 @@ export class Interface {
         return
       }
 
+      if (raw === this.viewer) {
+        this.closeViewer()
+        return
+      }
+
       const target = raw.closest<HTMLElement>('[data-action], [data-view], .card')
       if (!target) return
 
@@ -160,6 +173,12 @@ export class Interface {
           break
         case 'next':
           this.handlers.onNext()
+          break
+        case 'view-site':
+          this.openViewer()
+          break
+        case 'close-viewer':
+          this.closeViewer()
           break
         case 'close-index':
           this.handlers.onView('world')
@@ -240,21 +259,50 @@ export class Interface {
       this.liveLink.classList.add('is-disabled')
     }
 
-    if (project.repoUrl) {
-      this.repoLink.href = project.repoUrl
-      this.repoLink.classList.remove('is-disabled')
-    } else {
-      this.repoLink.removeAttribute('href')
-      this.repoLink.classList.add('is-disabled')
-    }
+    this.currentProject = project
 
     this.record.classList.add('is-open')
     this.setAccent(project.accent)
     this.setMeter(index)
     this.setStationLabel(`${String(index + 1).padStart(2, '0')} · ${project.title}`)
+
+    if (this.isViewerOpen) this.openViewer()
+  }
+
+  get isViewerOpen(): boolean {
+    return this.viewer.classList.contains('is-open')
+  }
+
+  openViewer(): void {
+    const url = this.currentProject?.liveUrl
+    if (!url) return
+
+    this.viewerTitle.textContent = this.currentProject?.title ?? '—'
+    this.viewerOpen.href = url
+
+    if (this.viewerFrame.dataset.src !== url) {
+      this.viewerFrame.dataset.src = url
+      this.viewerFrame.src = url
+    }
+
+    this.viewer.classList.add('is-open')
+    document.body.classList.add('is-viewer')
+  }
+
+  closeViewer(): void {
+    if (!this.isViewerOpen) return
+    this.viewer.classList.remove('is-open')
+    document.body.classList.remove('is-viewer')
+
+    window.setTimeout(() => {
+      if (this.isViewerOpen) return
+      this.viewerFrame.removeAttribute('src')
+      delete this.viewerFrame.dataset.src
+    }, 420)
   }
 
   hideRecord(): void {
+    this.closeViewer()
     this.record.classList.remove('is-open')
     this.setAccent('#8b7cff')
     this.setStationLabel('Ring · idle')
@@ -273,6 +321,7 @@ export class Interface {
     if (view === 'index') this.record.classList.remove('is-open')
     if (view === 'about') this.record.classList.remove('is-open')
     if (view === 'world') this.record.classList.remove('is-open')
+    if (view !== 'world') this.closeViewer()
     document.body.classList.toggle('is-modal', view !== 'world')
   }
 

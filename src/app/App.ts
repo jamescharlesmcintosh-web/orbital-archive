@@ -131,6 +131,10 @@ export class App {
   }
 
   private handleCancel = (): void => {
+    if (this.ui.isViewerOpen) {
+      this.ui.closeViewer()
+      return
+    }
     if (this.ui.currentView !== 'world') {
       this.setView('world')
       return

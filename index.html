@@ -103,11 +103,11 @@
           <div class="record__stack" data-field="stack"></div>
 
           <div class="record__actions">
-            <a class="btn btn--primary btn--sm" data-field="live" href="#" target="_blank" rel="noreferrer">
-              View live
-            </a>
-            <a class="btn btn--ghost btn--sm" data-field="repo" href="#" target="_blank" rel="noreferrer">
-              Source
+            <button class="btn btn--primary btn--sm" data-action="view-site">
+              View in orbit
+            </button>
+            <a class="btn btn--ghost btn--sm" data-field="live" href="#" target="_blank" rel="noreferrer">
+              Open ↗
             </a>
             <button class="btn btn--ghost btn--sm" data-action="next">Next →</button>
           </div>
@@ -146,6 +146,31 @@
             <div class="record__actions">
               <a class="btn btn--primary btn--sm" href="mailto:hello@example.com">Get in touch</a>
               <button class="btn btn--ghost btn--sm" data-view="index">Browse index</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="viewer" data-el="viewer" aria-label="Live site viewer">
+          <div class="viewer__shell">
+            <header class="viewer__bar">
+              <span class="viewer__pip" aria-hidden="true"></span>
+              <span class="viewer__title" data-field="viewer-title">—</span>
+              <span class="viewer__tag">live · embedded</span>
+              <a class="viewer__open" data-field="viewer-open" href="#" target="_blank" rel="noreferrer">Open ↗</a>
+              <button class="viewer__close" data-action="close-viewer" aria-label="Close live view">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6">
+                  <path d="M6 6l12 12M18 6L6 18" />
+                </svg>
+              </button>
+            </header>
+            <div class="viewer__stage">
+              <iframe
+                class="viewer__iframe"
+                data-el="viewer-iframe"
+                title="Live site preview"
+                referrerpolicy="no-referrer"
+              ></iframe>
+              <span class="viewer__scan" aria-hidden="true"></span>
             </div>
           </div>
         </section>
