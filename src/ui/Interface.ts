@@ -91,7 +91,7 @@ export class Interface {
       const img = document.createElement('img')
       img.alt = `${project.title} preview`
       img.loading = 'lazy'
-      img.src = makeProjectThumb(project).toDataURL('image/png')
+      img.src = project.image ?? makeProjectThumb(project).toDataURL('image/png')
       thumb.appendChild(img)
 
       const accent = document.createElement('span')

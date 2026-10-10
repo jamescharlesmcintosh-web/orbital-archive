@@ -5,7 +5,7 @@ import { TAU, clamp, damp, lerp } from '../lib/math'
 
 const PANEL_W = 3.7
 const PANEL_H = 2.32
-const RING_RADIUS = 9.4
+const RING_RADIUS = 13
 const RING_Y = 1.15
 const RING_TILT = -0.24
 const ORBIT_SPEED = -0.04
@@ -15,6 +15,7 @@ interface Station {
   project: Project
   group: THREE.Group
   screen: THREE.Mesh
+  screenBack: THREE.Mesh
   screenMaterial: THREE.MeshBasicMaterial
   glow: THREE.Mesh
   glowMaterial: THREE.MeshBasicMaterial
@@ -48,7 +49,7 @@ export class PanelRing {
       const station = this.buildStation(project, index, projects.length, maxAnisotropy)
       this.stations.push(station)
       this.group.add(station.group)
-      this.hitTargets.push(station.screen)
+      this.hitTargets.push(station.screen, station.screenBack)
     })
   }
 
@@ -73,15 +74,23 @@ export class PanelRing {
 
     const screenMaterial = new THREE.MeshBasicMaterial({
       map: canvasTexture,
-      side: THREE.DoubleSide,
+      color: new THREE.Color().setScalar(0.7),
       transparent: true,
       opacity: 1,
       toneMapped: false,
     })
-    const screen = new THREE.Mesh(new THREE.PlaneGeometry(PANEL_W, PANEL_H, 1, 1), screenMaterial)
+    const screenGeometry = new THREE.PlaneGeometry(PANEL_W, PANEL_H, 1, 1)
+    const screen = new THREE.Mesh(screenGeometry, screenMaterial)
     screen.userData.index = index
     screen.renderOrder = 4
     group.add(screen)
+
+    const screenBack = new THREE.Mesh(screenGeometry, screenMaterial)
+    screenBack.rotation.y = Math.PI
+    screenBack.position.z = -0.002
+    screenBack.userData.index = index
+    screenBack.renderOrder = 4
+    group.add(screenBack)
 
     const edgeMaterial = new THREE.MeshBasicMaterial({
       color: new THREE.Color(project.accent),
@@ -157,6 +166,7 @@ export class PanelRing {
       project,
       group,
       screen,
+      screenBack,
       screenMaterial,
       glow,
       glowMaterial,

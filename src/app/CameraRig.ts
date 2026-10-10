@@ -8,8 +8,8 @@ export interface FocusFrame {
   lookAt: THREE.Vector3
 }
 
-const MIN_RADIUS = 11
-const MAX_RADIUS = 40
+const MIN_RADIUS = 15
+const MAX_RADIUS = 52
 const ZOOM_MIN = -7
 const ZOOM_MAX = 24
 
@@ -17,8 +17,8 @@ export class CameraRig {
   readonly camera: THREE.PerspectiveCamera
 
   azimuth = -Math.PI / 2
-  radius = 18
-  elevation = 4.3
+  radius = 25
+  elevation = 6
 
   mode: RigMode = 'orbit'
   autoRotate = true
